@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const todoInput = document.getElementById('todoInput');
     const addTodoBtn = document.getElementById('addTodoBtn');
     const todoList = document.getElementById('todoList');
-    const listTitle = document.getElementById('listTitle');  // Get the title element
+    const listTitle = document.getElementById('listTitle'); // Get the title element
 
     let lists = {}; // Store lists as objects
     let currentList = "default"; // Default list name
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebar.classList.toggle('collapsed');
     });
 
-
     // Function to create a new list
     function createNewList() {
         const listName = prompt("Enter a name for the new list:");
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert("List name already exists!");
                 return;
             }
-
             lists[listName] = []; // Initialize new list
             addListToSelector(listName);
             switchList(listName);
@@ -54,16 +52,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         editListNameInput.addEventListener('blur', () => {
             const newListName = editListNameInput.value.trim();
-
             if (newListName && newListName !== listName) {
                 if (lists[newListName]) {
                     alert("List name already exists!");
                     // Revert to original name
                     editListNameInput.value = listName;
                     listNameSpan.textContent = listName;
-
                 } else {
-                      // Update the list in the lists object
+                    // Update the list in the lists object
                     lists[newListName] = lists[listName];
                     delete lists[listName];
 
@@ -71,32 +67,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (currentList === listName) {
                         currentList = newListName;
                     }
+
                     // Update the UI
                     listNameSpan.textContent = newListName;
                     listTitle.textContent = newListName;
                     li.dataset.listName = newListName;
                     switchList(newListName);
-
                 }
-
-
             }
-                listNameSpan.style.display = 'inline-block';
-                editListNameInput.style.display = 'none';
-
+            listNameSpan.style.display = 'inline-block';
+            editListNameInput.style.display = 'none';
         });
+
         li.addEventListener('click', (event) => {
             switchList(li.dataset.listName);
         });
 
-         deleteListBtn.addEventListener('click', (event) => {
+        deleteListBtn.addEventListener('click', (event) => {
             event.stopPropagation(); // Prevent list switching
             const listToDelete = li.dataset.listName;
             if (confirm(`Are you sure you want to delete the list "${listToDelete}"? This action cannot be undone.`)) {
                 deleteList(listToDelete);
             }
         });
-
 
         listSelector.appendChild(li);
     }
@@ -106,11 +99,10 @@ document.addEventListener('DOMContentLoaded', function() {
         currentList = listName;
         updateTodoList();
         updateActiveList(); // call to update active list
-
         listTitle.textContent = listName; // Update the list title
     }
 
-     function updateActiveList() {
+    function updateActiveList() {
         document.querySelectorAll('#listSelector li').forEach(item => {
             item.classList.remove('active');
         });
@@ -123,14 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to add a todo to the current list
     function addTodo() {
         const todoText = todoInput.value.trim();
-
         if (todoText !== "") {
             const todo = {
                 text: todoText,
                 details: "",
                 editingDetails: false
             };
-
             if (!lists[currentList]) {
                 lists[currentList] = []; // Initialize the current list if it doesn't exist
             }
@@ -146,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (lists[currentList]) {
             lists[currentList].forEach((todo, index) => {
                 const li = document.createElement('li');
+                li.dataset.index = index;  // Store the index
                 li.innerHTML = `
                     <span>${todo.text}</span>
                     <div class="todo-buttons">
@@ -160,20 +151,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Event listeners for buttons
                 const detailsBtn = li.querySelector('.details-btn');
                 detailsBtn.addEventListener('click', () => toggleDetails(index));
-
                 const moveUpBtn = li.querySelector('.move-up-btn');
                 moveUpBtn.addEventListener('click', () => moveTodoUp(index));
-
                 const moveDownBtn = li.querySelector('.move-down-btn');
                 moveDownBtn.addEventListener('click', () => moveTodoDown(index));
-
                 const deleteBtn = li.querySelector('.delete-btn');
                 deleteBtn.addEventListener('click', () => deleteTodo(index));
 
                 todoList.appendChild(li);
 
                 // Add event listener for textarea blur to save automatically
-                if(todo.editingDetails) {
+                if (todo.editingDetails) {
                     const textarea = li.querySelector('.details textarea');
                     textarea.addEventListener('blur', () => saveDetails(index, textarea.value));
                 }
@@ -182,19 +170,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function toggleDetails(index) {
-        lists[currentList[index].editingDetails] = !lists[currentList][index].editingDetails;
+        if (!lists[currentList][index]) return; // Check if the todo exists
+
+        lists[currentList][index].editingDetails = !lists[currentList][index].editingDetails;
         updateTodoList();
     }
 
     function saveDetails(index, details) {
+         if (!lists[currentList][index]) return; // Check if the todo exists
+
         lists[currentList][index].details = details;
         lists[currentList][index].editingDetails = false; // Switch to display mode
         updateTodoList();
     }
 
-
     function moveTodoUp(index) {
-        if (index > 0) {
+        if (index > 0 && lists[currentList]) {
             const temp = lists[currentList][index];
             lists[currentList][index] = lists[currentList][index - 1];
             lists[currentList][index - 1] = temp;
@@ -203,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function moveTodoDown(index) {
-        if (index < lists[currentList].length - 1) {
+        if (index < lists[currentList].length - 1 && lists[currentList]) {
             const temp = lists[currentList][index];
             lists[currentList][index] = lists[currentList][index + 1];
             lists[currentList][index + 1] = temp;
@@ -214,27 +205,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function deleteList(listToDelete) {
         if (lists[listToDelete]) {
             delete lists[listToDelete];
-             if (currentList === listToDelete) {
+            if (currentList === listToDelete) {
                 currentList = "default"; // Switch to default if deleting the current list
             }
 
             // Remove from list selector
             const liToDelete = document.querySelector(`#listSelector li[data-list-name="${listToDelete}"]`);
             if (liToDelete) {
-                 listSelector.removeChild(liToDelete);
+                listSelector.removeChild(liToDelete);
             }
             updateTodoList();
             updateActiveList();
-
-              listTitle.textContent = currentList;
-
+            listTitle.textContent = currentList;
         }
     }
 
     // Function to delete a todo from the current list
     function deleteTodo(index) {
-        lists[currentList].splice(index, 1);
-        updateTodoList();
+        if (lists[currentList]) {
+             lists[currentList].splice(index, 1);
+             updateTodoList();
+        }
     }
 
     // Event Listeners
@@ -245,5 +236,4 @@ document.addEventListener('DOMContentLoaded', function() {
     lists["default"] = [];
     addListToSelector("default");
     switchList("default"); // Set "default" as the initial active list
-
 });

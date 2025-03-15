@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar (List Navigation) -->
+        <div class="sidebar">
+            <div class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="list-navigation">
+                <button id="newListBtn">New List</button>
+                <ul id="listSelector">
+                    <!-- List names will be added here -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content (Todo List) -->
+        <div class="main-content">
+            <h1 id="listTitle">Todo List</h1>  <!-- List Name displayed here -->
+            <div class="input-section">
+                <input type="text" id="todoInput" placeholder="Add a todo...">
+                <button id="addTodoBtn">Add</button>
+            </div>
+            <ul id="todoList">
+                <!-- Todos will be added here -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
